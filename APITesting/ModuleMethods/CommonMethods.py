@@ -67,8 +67,18 @@ class CommonMethods(RequestUtil,DBUtils):
     since: 11 August 2024
     desc: This method is used to execute Select Query
     param: selectQuery
-    return: dict
+    return: list of dict
     '''
     def executeSelectQuery(self,selectQuery):
         dbResponse = self.executeSelectSqlQuery(selectQuery)
         return dbResponse
+
+    '''
+    created By: Shivam Ojha
+    since: 14 August 2024
+    desc: This method is used to execute Non Select Query
+    param: nonSelectQuery
+    return: int
+    '''
+    def executeNonSelectQuery(self,nonSelectQuery):
+        return self.executeNonSelectSqlQuery(nonSelectQuery)

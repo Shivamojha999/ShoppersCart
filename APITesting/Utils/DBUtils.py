@@ -21,7 +21,7 @@ class DBUtils(Request):
     since: 11 August 2024
     desc: This method is used to execute Select Sql Query
     param: sqlQuery
-    return: dict
+    return: list Of dict
     '''
     def executeSelectSqlQuery(self,sqlQuery):
         connection = self.createDbConnection()
@@ -35,3 +35,25 @@ class DBUtils(Request):
         finally:
             connection.close()
         return dbResponse
+
+    '''
+    created By: Shivam Ojha
+    since: 14 August 2024
+    desc: This method is used to execute Non Select Sql Query
+    param: sqlQuery
+    return: int
+    '''
+    def executeNonSelectSqlQuery(self, sqlQuery):
+        connection = self.createDbConnection()
+        try:
+            dbCursor = connection.cursor()
+            dbCursor.execute(sqlQuery)
+            connection.commit()
+            rowsAffected = dbCursor.rowcount
+            dbCursor.close()
+        except Exception as e:
+            connection.rollback()
+            raise Exception(f"Failed running {sqlQuery}, Error: {str(e)}")
+        finally:
+            connection.close()
+        return rowsAffected

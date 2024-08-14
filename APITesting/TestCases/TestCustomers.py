@@ -31,3 +31,26 @@ class TestCustomers(CommonMethods):
         userId = customers.createCustomerAndGetId(self.commonUrl,data,201)
         customerCreatedInDB = customers.verifySpecificCustomerCreatedInDB(f"select * from wp_wc_customer_lookup where user_id = {userId}",userName)
         assert customerCreatedInDB is True,f"Fail: verifySpecificCustomerCreatedInDB return False for Customer: {userName}"
+
+    def test_VerifyListOfCreatedCustomersInDBAndUsingUrl(self):
+        customers = Customers()
+        customerList = customers.verifyListOfCustomerDisplayed(self.commonUrl,200)
+        assert  customerList is True,f"Failed: verifyListOfCustomerDisplayed returns False as no Customers were present"
+        customerListInDB = customers.verifyListOfCustomerPresentInDB("select * from wp_wc_customer_lookup")
+        assert  customerListInDB is True,f"Failed: verifyListOfCustomerPresentInDB returns False as no Customers were present in data base"
+
+    def test_CustomersCanBeDeletedFromDataBase(self):
+        customers = Customers()
+        firstName = self.alphaStringGenerator(6)
+        lastName = self.alphaStringGenerator(5)
+        userName = firstName+"."+lastName
+        billingData = self.createDictionary(first_name=firstName,last_name=lastName,company=self.alphaStringGenerator(10),address_1=self.alphaNumericStringGenerator(8),address_2=self.alphaNumericStringGenerator(5),city=self.alphaStringGenerator(7),state=self.alphaStringGenerator(5),postcode=self.randomNumberGenerator(2000,5000),country=self.alphaStringGenerator(10),email=firstName+lastName+"@gmail.com",phone=self.randomNumberGenerator(2000000000,5000000000))
+        shippingData = self.createDictionary(first_name=firstName,last_name=lastName,company=billingData["company"],address_1=billingData["address_1"],address_2=billingData["address_2"],city=billingData["city"],state=billingData["state"],postcode=billingData["postcode"],country=billingData["country"])
+        data = self.createDictionary(email=billingData["email"],first_name=firstName,last_name=lastName,username=userName,billing=billingData,shipping=shippingData)
+        userId = customers.createCustomerAndGetId(self.commonUrl,data,201)
+        customerCreatedInDB = customers.verifySpecificCustomerCreatedInDB(f"select * from wp_wc_customer_lookup where user_id = {userId}",userName)
+        assert customerCreatedInDB is True,f"Fail: verifySpecificCustomerCreatedInDB return False for Customer: {userName}"
+        oneRowsAffected = customers.deleteSpecificCustomerFromDB(f"delete from wp_wc_customer_lookup where user_id = {userId}")
+        assert oneRowsAffected is True
+        customerNotDeleted = customers.verifySpecificCustomerCreatedInDB(f"select * from wp_wc_customer_lookup where user_id = {userId}",userName)
+        assert customerNotDeleted is False,f"Fail: verifySpecificCustomerCreatedInDB return True for Customer: {userName}"
