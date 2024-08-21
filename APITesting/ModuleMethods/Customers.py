@@ -70,3 +70,14 @@ class Customers(CommonMethods):
     def deleteSpecificCustomerFromDB(self,query,rowsAffected=1):
         dbresponse = self.executeNonSelectQuery(query)
         return dbresponse == rowsAffected
+
+    '''
+    created By: Shivam Ojha
+    since: 30 August21 2024
+    desc: This method is used to create Customer get error message
+    param: url,data,statusCode
+    return: String
+    '''
+    def createCustomerAndGetErrorMessage(self,url,data,statusCode):
+        response = self.post(url,data,statusCode).json()
+        return str(response["message"])

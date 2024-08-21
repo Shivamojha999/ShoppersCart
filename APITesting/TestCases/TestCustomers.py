@@ -54,3 +54,19 @@ class TestCustomers(CommonMethods):
         assert oneRowsAffected is True
         customerNotDeleted = customers.verifySpecificCustomerCreatedInDB(f"select * from wp_wc_customer_lookup where user_id = {userId}",userName)
         assert customerNotDeleted is False,f"Fail: verifySpecificCustomerCreatedInDB return True for Customer: {userName}"
+
+    def test_VerifyEmailAccountAlreadyExist(self):
+        customers = Customers()
+        firstName = self.alphaStringGenerator(6)
+        lastName = self.alphaStringGenerator(5)
+        userName = firstName+"."+lastName
+        billingData = self.createDictionary(first_name=firstName,last_name=lastName,company=self.alphaStringGenerator(10),address_1=self.alphaNumericStringGenerator(8),address_2=self.alphaNumericStringGenerator(5),city=self.alphaStringGenerator(7),state=self.alphaStringGenerator(5),postcode=self.randomNumberGenerator(2000,5000),country=self.alphaStringGenerator(10),email=firstName+lastName+"@gmail.com",phone=self.randomNumberGenerator(2000000000,5000000000))
+        shippingData = self.createDictionary(first_name=firstName,last_name=lastName,company=billingData["company"],address_1=billingData["address_1"],address_2=billingData["address_2"],city=billingData["city"],state=billingData["state"],postcode=billingData["postcode"],country=billingData["country"])
+        data = self.createDictionary(email=billingData["email"],first_name=firstName,last_name=lastName,username=userName,billing=billingData,shipping=shippingData)
+        _ = customers.createCustomerAndGetId(self.commonUrl,data,201)
+        alreadyExistEmail = billingData["email"]
+        billingDataNew = self.createDictionary(first_name=firstName,last_name=lastName,company=self.alphaStringGenerator(10),address_1=self.alphaNumericStringGenerator(8),address_2=self.alphaNumericStringGenerator(5),city=self.alphaStringGenerator(7),state=self.alphaStringGenerator(5),postcode=self.randomNumberGenerator(2000,5000),country=self.alphaStringGenerator(10),email=alreadyExistEmail,phone=self.randomNumberGenerator(2000000000,5000000000))
+        shippingDataNew = self.createDictionary(first_name=firstName,last_name=lastName,company=billingDataNew["company"],address_1=billingDataNew["address_1"],address_2=billingDataNew["address_2"],city=billingDataNew["city"],state=billingDataNew["state"],postcode=billingDataNew["postcode"],country=billingDataNew["country"])
+        dataNew = self.createDictionary(email=alreadyExistEmail,first_name=firstName,last_name=lastName,username=userName,billing=billingDataNew,shipping=shippingDataNew)
+        errorMessage = customers.createCustomerAndGetErrorMessage(self.commonUrl,dataNew,400)
+        assert errorMessage.__contains__("An account is already registered with your email address.") , f"Failed: Actual error message not equals to expected error message"
