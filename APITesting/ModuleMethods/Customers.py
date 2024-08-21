@@ -3,6 +3,9 @@ from APITesting.ModuleMethods.CommonMethods import CommonMethods
 
 class Customers(CommonMethods):
 
+    def __init__(self):
+        pass
+
     '''
     created By: Shivam Ojha
     since: 30 July 2024
