@@ -73,7 +73,7 @@ class Customers(CommonMethods):
 
     '''
     created By: Shivam Ojha
-    since: 30 August21 2024
+    since: 21 August 2024
     desc: This method is used to create Customer get error message
     param: url,data,statusCode
     return: String
