@@ -23,6 +23,7 @@ class CommonMethods(RequestUtil,DBUtils):
     param: length
     return: string
     '''
+    @classmethod
     def alphaNumericStringGenerator(self,length):
         char = string.ascii_letters+string.digits
         randomString = "".join(random.choices(char,k=length))
@@ -35,6 +36,7 @@ class CommonMethods(RequestUtil,DBUtils):
     param: length
     return: string
     '''
+    @classmethod
     def alphaStringGenerator(self,length):
         char = string.ascii_uppercase + string.ascii_lowercase
         randomString = "".join(random.choices(char,k=length))
@@ -47,6 +49,7 @@ class CommonMethods(RequestUtil,DBUtils):
     param: lowerLimit, upperLimit
     return: string
     '''
+    @classmethod
     def randomNumberGenerator(self,lowerLimit,upperLimit):
         number = round(random.uniform(lowerLimit,upperLimit),2)
         return str(number)
